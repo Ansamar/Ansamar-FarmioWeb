@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ farmaco.nome }} - Dettaglio Farmaco</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include 'nav.html' %}
+    <div class="container mt-5 pt-5">
+        <h1 class="mb-4">{{ farmaco.nome }}</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="alert-container">
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <p><strong>Dosaggio:</strong> {{ farmaco.dosaggio }}</p>
+                <p><strong>Tipo di Farmaco:</strong> {{ farmaco.tipo_farmaco.capitalize() }}</p>
+                <p><strong>Quantità per Confezione:</strong> {{ farmaco.quantita_contenuto }}</p>
+                <p><strong>Consumo Giornaliero:</strong> {{ farmaco.consumo_giornaliero }}</p>
+                <p><strong>Giacenza Attuale:</strong> {{ farmaco.quantita_attuale }}</p>
+                <p><strong>Indice di Facilità:</strong> {{ farmaco.indice_facilita }}</p>
+                {% if farmaco.consumo_giornaliero > 0 %}
+                    <p><strong>Giorni Rimanenti:</strong> {{ '%.1f'|format(giorni_rimanenti) }}</p>
+                {% else %}
+                    <p><strong>Giorni Rimanenti:</strong> N/A (Consumo 0)</p>
+                {% endif %}
+                <p><strong>Ultima Verifica:</strong> {{ farmaco.ultima_verifica.strftime('%d/%m/%Y %H:%M') }}</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h2 class="mt-4">Verifica Giacenza</h2>
+                <form action="{{ url_for('verifica_farmaco', farmaco_id=farmaco.id) }}" method="POST">
+                    <div class="form-group">
+                        <label for="quantita_attuale">Nuova Giacenza Attuale</label>
+                        <input type="number" class="form-control" id="quantita_attuale" name="quantita_attuale" required>
+                    </div>
+                    <button type="submit" class="btn btn-info">Aggiorna Giacenza</button>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <h2 class="mt-4">Crea Nuovo Ordine</h2>
+                <form action="{{ url_for('nuovo_ordine', farmaco_id=farmaco.id) }}" method="POST">
+                    <div class="form-group">
+                        <label for="quantita_richiesta">Quantità richiesta</label>
+                        <input type="number" class="form-control" id="quantita_richiesta" name="quantita_richiesta" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Crea Ordine</button>
+                </form>
+            </div>
+        </div>
+
+        <h2 class="mt-5">Storico Ordini</h2>
+        {% if ordini %}
+            <div class="list-group">
+                {% for ordine in ordini %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Ordine del:</strong> {{ ordine.data.strftime('%d/%m/%Y %H:%M') }}<br>
+                            <strong>Quantità:</strong> {{ ordine.quantita_richiesta }}<br>
+                            <strong>Stato:</strong> {{ ordine.stato.capitalize() }}
+                        </div>
+                        <div class="btn-group" role="group">
+                            {% if ordine.stato == 'richiesta' %}
+                                <a href="{{ url_for('aggiorna_stato_ordine', ordine_id=ordine.id, stato_id='conferma') }}" class="btn btn-sm btn-success">Conferma</a>
+                                <form action="{{ url_for('annulla_ordine', ordine_id=ordine.id) }}" method="POST" class="d-inline ml-2">
+                                    <button type="submit" class="btn btn-sm btn-danger">Annulla</button>
+                                </form>
+                            {% elif ordine.stato == 'confermata' %}
+                                <a href="{{ url_for('aggiorna_stato_ordine', ordine_id=ordine.id, stato_id='acquisisci') }}" class="btn btn-sm btn-info">Acquisisci</a>
+                                <form action="{{ url_for('annulla_ordine', ordine_id=ordine.id) }}" method="POST" class="d-inline ml-2">
+                                    <button type="submit" class="btn btn-sm btn-danger">Annulla</button>
+                                </form>
+                            {% elif ordine.stato == 'acquisita' %}
+                                <span class="badge badge-success">Acquisito</span>
+                            {% elif ordine.stato == 'annullato' %}
+                                <span class="badge badge-danger">Annullato</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>Nessun ordine registrato per questo farmaco.</p>
+        {% endif %}
+
+        <div class="mt-4 d-flex justify-content-between">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Torna alla Dashboard</a>
+            <a href="{{ url_for('modifica_farmaco', farmaco_id=farmaco.id) }}" class="btn btn-warning">Modifica Farmaco</a>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Farmio. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

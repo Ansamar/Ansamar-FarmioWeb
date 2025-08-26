@@ -1,0 +1,100 @@
+/* Stili Generali e Layout */
+
+body {
+    padding-top: 10rem; /* Per lasciare spazio alla navbar fissa */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #343a40;
+}
+
+.container {
+    max-width: 960px;
+}
+
+/* Stili Header */
+.header {
+    background-color: #007bff;
+    color: rgb(255, 255, 255);
+    padding: 10rem 0;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+    margin: 20;
+}
+
+/* Stili per la legenda dei colori */
+.card-status-warning {
+    border-left: 15px solid #ffc107; /* Giallo - Scorta bassa */
+}
+
+.card-status-danger {
+    border-left: 15px solid #dc3545; /* Rosso - Scorta critica */
+}
+
+.card-status-ok {
+    border-left: 15px solid #28a745; /* Verde - Scorta sufficiente */
+}
+
+.color-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+/* Stili per la legenda e il box info */
+.card-legend {
+    border-radius: .5rem;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 .125rem .25rem rgba(0,0,0,.075);
+}
+
+/* Stili per la lista degli ordini in corso */
+.list-group-item {
+    transition: background-color .2s ease-in-out;
+}
+
+.list-group-item:hover {
+    background-color: #e9ecef;
+}
+
+/* Stili per le icone o immagini */
+.icon {
+    width: 24px;
+    height: 24px;
+    vertical-align: middle;
+}
+
+/* Stili per i bottoni */
+.btn-primary, .btn-success, .btn-danger, .btn-warning {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s;
+}
+
+.btn-primary:hover, .btn-success:hover, .btn-danger:hover, .btn-warning:hover {
+    transform: translateY(-2px);
+}
+
+/* Stili Footer */
+.footer {
+    text-align: center;
+    padding: 2rem 0;
+    margin-top: 3rem;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+/* Stili Personalizzati per l'Header */
+.custom-header {
+    background-color: #3f51b5; /* Esempio: un blu profondo */
+}
+
+.custom-header .navbar-brand, 
+.custom-header .nav-link {
+    color: white; /* Imposta il colore del testo su bianco */
+}
+
+.custom-header .nav-link:hover {
+    color: #ffd700; /* Esempio: cambia colore al passaggio del mouse */
+}

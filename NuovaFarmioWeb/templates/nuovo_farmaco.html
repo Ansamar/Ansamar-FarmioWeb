@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggiungi Nuovo Farmaco - Farmio</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include 'nav.html' %}
+    <div class="container mt-5 pt-5">
+        <h1 class="mb-4">Aggiungi Nuovo Farmaco</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="alert-container">
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="nome">Nome del Farmaco</label>
+                <input type="text" class="form-control" id="nome" name="nome" required>
+            </div>
+            <div class="form-group">
+                <label for="dosaggio">Dosaggio</label>
+                <input type="text" class="form-control" id="dosaggio" name="dosaggio">
+            </div>
+            <div class="form-group">
+                <label for="tipo_farmaco">Tipo di Farmaco</label>
+                <select class="form-control" id="tipo_farmaco" name="tipo_farmaco" required>
+                    {% for tipo in tipi_farmaco %}
+                        <option value="{{ tipo }}">{{ tipo.capitalize() }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="quantita_contenuto">Quantità per confezione</label>
+                <input type="number" class="form-control" id="quantita_contenuto" name="quantita_contenuto" required>
+            </div>
+            <div class="form-group">
+                <label for="consumo_giornaliero">Consumo Giornaliero</label>
+                <input type="number" class="form-control" id="consumo_giornaliero" name="consumo_giornaliero" required>
+            </div>
+            <div class="form-group">
+                <label for="quantita_attuale">Quantità Attuale</label>
+                <input type="number" class="form-control" id="quantita_attuale" name="quantita_attuale" required>
+            </div>
+            <div class="form-group">
+                <label for="indice_facilita">Indice di Facilità (1-5)</label>
+                <input type="number" class="form-control" id="indice_facilita" name="indice_facilita" min="1" max="5" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Aggiungi Farmaco</button>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">Annulla</a>
+        </form>
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Farmio. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

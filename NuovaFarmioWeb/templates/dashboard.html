@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Farmio</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% include 'nav.html' %}
+    <div class="container mt-5 pt-5">
+        <h1 class="mb-4">Dashboard Farmaci</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="alert-container">
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <div class="card mb-4 card-legend">
+            <div class="card-header">
+                Legenda Stato Scorte
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-2">
+                    <div class="color-box bg-success mr-2"></div>
+                    <span>Scorta sufficiente</span>
+                </div>
+                <div class="d-flex align-items-center mb-2">
+                    <div class="color-box bg-warning mr-2"></div>
+                    <span>Scorta bassa (meno di 7 giorni)</span>
+                </div>
+                <div class="d-flex align-items-center">
+                    <div class="color-box bg-danger mr-2"></div>
+                    <span>Scorta critica (esaurita)</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            {% for farmaco in farmaci %}
+                {% set status_class = 'card-status-ok' %}
+                {% if farmaco.quantita_attuale <= 0 %}
+                    {% set status_class = 'card-status-danger' %}
+                {% elif farmaco.consumo_giornaliero > 0 and (farmaco.quantita_attuale / farmaco.consumo_giornaliero) <= 7 %}
+                    {% set status_class = 'card-status-warning' %}
+                {% endif %}
+                <div class="col-md-4 mb-4">
+                    <div class="card {{ status_class }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ farmaco.nome }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">{{ farmaco.dosaggio }} - {{ farmaco.tipo_farmaco.capitalize() }}</h6>
+                            <p class="card-text">
+                                Giacenza Attuale: {{ farmaco.quantita_attuale }}<br>
+                                Consumo Giornaliero: {{ farmaco.consumo_giornaliero }}<br>
+                                {% if farmaco.consumo_giornaliero > 0 %}
+                                    Giorni Rimanenti: {{ '%.1f'|format(farmaco.quantita_attuale / farmaco.consumo_giornaliero) }}
+                                {% else %}
+                                    Giorni Rimanenti: N/A (Consumo 0)
+                                {% endif %}
+                            </p>
+                            <a href="{{ url_for('dettaglio_farmaco', farmaco_id=farmaco.id) }}" class="btn btn-primary">Dettagli</a>
+                            <form action="{{ url_for('elimina_farmaco', farmaco_id=farmaco.id) }}" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-danger">Elimina</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div class="mt-4">
+            <a href="{{ url_for('nuovo_farmaco') }}" class="btn btn-success">Aggiungi Nuovo Farmaco</a>
+        </div>
+        
+        <h2 class="mt-5 mb-3">Ordini in Corso</h2>
+        <div class="list-group">
+            {% for ordine in ordini_in_corso %}
+                <a href="{{ url_for('dettaglio_farmaco', farmaco_id=ordine.farmaco.id) }}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    <div>
+                        Ordine per: {{ ordine.farmaco.nome }} - Quantità: {{ ordine.quantita_richiesta }} - Stato: <span class="badge badge-secondary">{{ ordine.stato.capitalize() }}</span>
+                    </div>
+                    <small>{{ ordine.data.strftime('%d/%m/%Y %H:%M') }}</small>
+                </a>
+            {% else %}
+                <p>Nessun ordine in corso.</p>
+            {% endfor %}
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 Farmio. Tutti i diritti riservati.</p>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
